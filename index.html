@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fake Profile Predictor</title>
+    <style>
+        body{
+            background-image: url("https://img.freepik.com/free-vector/overlapping-forms-background-design_52683-44629.jpg");
+            background-size: cover;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <h2>Enter Profile Details</h2>
+    <form id="profileForm">
+        Account Age (days): <input type="number" id="age"><br><br>
+        Followers: <input type="number" id="followers"><br><br>
+        Following: <input type="number" id="following"><br><br>
+        Posts per Day: <input type="number" step="0.01" id="posts"><br><br>
+        <button type="submit">Predict</button>
+    </form>
+
+    <h3 id="result"></h3>
+
+    <script>
+        const form = document.getElementById("profileForm");
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const data = {
+                account_age_days: parseInt(document.getElementById("age").value),
+                followers: parseInt(document.getElementById("followers").value),
+                following: parseInt(document.getElementById("following").value),
+                posts_per_day: parseFloat(document.getElementById("posts").value)
+            };
+
+            const response = await fetch("http://localhost:8000/predict_profile", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            document.getElementById("result").textContent = result.is_fake
+                ? "⚠️ This profile is likely FAKE."
+                : "✅ This profile looks REAL.";
+        });
+    </script>
+</body>
+</html>
